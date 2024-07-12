@@ -1,7 +1,11 @@
 const router = require('express').Router();
 
 router.get("/", (req, res) => {
-    console.log('Hello')
+    // Get all users
+    db.collection('user').find()
+    
+
+
 });
 
 

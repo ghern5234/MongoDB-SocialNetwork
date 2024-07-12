@@ -12,7 +12,7 @@ const app = express();  // Initialize app
 
 app.use(express.urlencoded({extended: true})); // Lets us use (:) in our url
 app.use(express.json()); // Lets us use json files in our responses and requests
-app.use(routes);
+app.use("/api", routes);
 
 
 
