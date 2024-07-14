@@ -43,5 +43,105 @@ module.exports = {
         } catch (error) {
             res.status(500).json(error)  
         }
+    },
+    async removeUserById(req, res){
+      try {
+        const user = await User.findByIdAndDelete(req.params.id) // Is this the right method 
+        
+        // Verify user exists in database or wrong id entered
+        if(!user){
+            return res.status(404).json({error: 'User not found with ID provided'})
+        }
+        // 
+        res.status(200).json(user)
+
+    } catch (error) {
+        res.status(500).json(error)  
+      }
+    },
+    async addNewFriend(req, res) {
+        try {
+
+            const user = await User.findById(req.params.userId)
+            
+            // Verify user exists or wrong id entered
+            if(!user){
+                return res.status(404).json({error: 'User not found'})
+            }
+
+            // Need to verify if the friend exists in the users friends list
+            if(user.friends.includes(req.params.friendId)){
+                return res.status(400).json({error: 'Friend already added'})
+            }
+
+            // Add the friendId to the user's friends list
+            user.friends.push(friendId);
+            await user.save(); //await here or above?
+
+            res.status(200).json(user, {message: 'Friend added successfully'}) // Can I do this?
+
+        } catch (error) {
+            res.status(500).json(error)  
+        }
+    },
+    async removeFriend(req, res) {
+        try {
+            const user = await User.findOneAndDelete(req.params.friendId) // Is this the right method???
+            
+            // Verify is friend is in user friend list, if not alert user that they are not there to remove
+            if(!user) {
+                return res.status(404).json({error: 'Friend already not in friend list'})
+            }
+
+            // Verify if friend is in users friend list
+            const friendIndex = user.friends.indexOf(req.params.friendId)
+            if(friendIndex === -1){
+                return res.status(400).json({error: 'Friend not found'})
+            }
+
+            // Delete friend from user's friend list
+            user.friends.splice(friendIndex, 1);
+            await user.save();
+
+            res.status(200).json(user, {message: 'Friend removed successfully'}) // Can I do this?
+
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json(error)  
+        }
+    },
+    async getAllThoughts(req, res) {
+        try {
+            // Find all thoughts
+            const thought = Thought.find()
+            // Display thought and status
+            res.status(200).json(thought)
+        } catch (error) {
+            console.error(error)
+            res.setatus(500).json(error)
+        }
+    },
+    async createThought(req, res) {
+        try {
+           
+
+            // Create a Thought
+            const newThought = new Thought(req.body.thoughtText)
+            await newThought.save();
+
+            const user = await User.findById(req.body.userId);
+            if(!user) {
+                return res.status(404).json({error: 'User not found with ID provided'}))
+            }
+
+            user.thoughts.push(newThought._id);
+            await user.save();
+
+            res.status(201).json({ message: 'Thought created and added to user successfully', thought: newThought });
+        } catch (error) {
+            console.error(error)
+            res.setatus(500).json(error)
+        }
     }
  }
