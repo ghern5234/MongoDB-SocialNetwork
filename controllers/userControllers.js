@@ -50,7 +50,7 @@ module.exports = {
     },
     async removeUserById(req, res){
       try {
-        const user = await User.findByIdAndDelete(req.params.id) // Is this the right method 
+        const user = await User.findByIdAndDelete(req.params.id) // Is this the right method or is it findById??????????
         
         // Verify user exists in database or wrong id entered
         if(!user){
@@ -90,7 +90,7 @@ module.exports = {
     },
     async removeFriend(req, res) {
         try {
-            const user = await User.findOneAndDelete(req.params.friendId) // Is this the right method???
+            const user = await User.findOneAndDelete(req.params.friendId) // Is this the right method?????????
             
             // Verify is friend is in user friend list, if not alert user that they are not there to remove
             if(!user) {
@@ -115,5 +115,4 @@ module.exports = {
             res.status(500).json(error)  
         }
     }
-    
  }

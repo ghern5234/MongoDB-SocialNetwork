@@ -1,4 +1,4 @@
-const { User, Thought, reactionSchema } = require('../models')
+const { Thought} = require('../models')
 
 
 module.exports = {
@@ -17,7 +17,7 @@ module.exports = {
     async createThought(req, res) {
         try {
             // Create a Thought from request body
-            const newThought = new Thought(req.body.thoughtText)
+            const newThought = new Thought(req.body)
             await newThought.save();
             
             // Search for user by id and verify if they already exist or not
@@ -83,7 +83,7 @@ module.exports = {
             // }
 
             // Add the reaction to the user's thought list
-            thought.reactions.push(reactions); // Verify if this is right???????
+            thought.reactions.push(req.params.reactions); // Verify if this is right???????
             await thought.save(); //await here or above?????
 
             res.status(200).json(thought, {message: 'Reactin added successfully'}) // Can I do this?
@@ -92,5 +92,33 @@ module.exports = {
             res.status(500).json(error)  
         }
     },
-    async 
+    async deleteReactionById (req, res) {
+        try {
+
+            const thought = await Thought.findOneAndDelete(req.params.reacationId) //Is this right? or is it just find by id?
+
+            // Verify thought exists ??????
+            if(!thought) {
+                return res.status(404).json({error: 'Friend already not in friend list'})
+            }
+            
+            // Verify reaction is in thought's reaction array
+            const reactionIndex = thought.reactions.indexOf(req.params.reactionId)
+            if(reactionIndex === -1){
+                return res.status(400).json({error: 'Reactionn not found'})
+            }
+            // Delete reactions(Id?) from thoughts reaction array at reaction index and update thought
+            thought.reactions.splice(reactionIndex, 1);
+            await thought.save();
+
+            res.status(200).json(thought, {message: 'Reaction successfuly removed'})
+
+            
+        } catch (error) {
+
+            console.error(error);
+            res.status(500).json(error);
+        }
+    },
+
 }
