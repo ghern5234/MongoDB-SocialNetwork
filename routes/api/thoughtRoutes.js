@@ -10,7 +10,7 @@ router.route(':id').get(getThoughtById).put(updateThoughtById).delete(deleteThou
 // Routes to Create new Reaction
 router.route('/:thoughtId/reactions').post(createReaction)
 
-// Routes to Delete Reaction by Id
+// Routes to Delete Thought Reaction by Id
 router.route('/:thoughtId/reactions/:reactionId').delete(deleteReactionById)
 
 
