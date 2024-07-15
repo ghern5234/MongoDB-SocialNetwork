@@ -26,12 +26,16 @@ module.exports = {
         try {
            const user = await User.findById(req.params.id) // Search by id given in request params
             .populate("thoughts").populate("friends") 
+
+            // Do I need an if statement to verify the user/userid exists???????
+
+
             res.status(200).json(user)      
         } catch (error) {
             res.status(500).json(error)  
         }
     },
-    async updateUser(req, res) {
+    async updateUserById(req, res) {
         try {
             const updatedUser = await User.findByIdAndUpdate(req.params.id, {
                 $set: req.body
@@ -110,38 +114,6 @@ module.exports = {
             console.error(error);
             res.status(500).json(error)  
         }
-    },
-    async getAllThoughts(req, res) {
-        try {
-            // Find all thoughts
-            const thought = Thought.find()
-            // Display thought and status
-            res.status(200).json(thought)
-        } catch (error) {
-            console.error(error)
-            res.setatus(500).json(error)
-        }
-    },
-    async createThought(req, res) {
-        try {
-           
-
-            // Create a Thought
-            const newThought = new Thought(req.body.thoughtText)
-            await newThought.save();
-
-            const user = await User.findById(req.body.userId);
-            if(!user) {
-                return res.status(404).json({error: 'User not found with ID provided'}))
-            }
-
-            user.thoughts.push(newThought._id);
-            await user.save();
-
-            res.status(201).json({ message: 'Thought created and added to user successfully', thought: newThought });
-        } catch (error) {
-            console.error(error)
-            res.setatus(500).json(error)
-        }
     }
+    
  }
