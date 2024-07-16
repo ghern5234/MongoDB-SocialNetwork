@@ -33,7 +33,7 @@ module.exports = {
             res.status(201).json({ message: 'Thought created and added to user successfully', thought: newThought });
         } catch (error) {
             console.error(error)
-            res.setatus(500).json(error)
+            res.status(500).json(error)
         }
     },
     async getThoughtById (req, res) {
