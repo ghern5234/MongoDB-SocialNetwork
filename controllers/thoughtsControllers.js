@@ -1,4 +1,4 @@
-const { Thought} = require('../models')
+const { Thought, User } = require('../models')
 
 
 module.exports = {
@@ -17,17 +17,18 @@ module.exports = {
     async createThought(req, res) {
         try {
             // Create a Thought from request body
-            const newThought = new Thought(req.body)
-            await newThought.save();
+            const newThought = await Thought.create(req.body)
+            console.log(newThought)
+         
             
             // Search for user by id and verify if they already exist or not
-            const user = await User.findById(req.body.userId);
-            if(!user) {
-                return res.status(404).json({error: 'User not found with ID provided'})
-            }
-            // Update user thought array to contain new id
-            user.thoughts.push(newThought._id); //Do I need the _id??????
-            await user.save();
+            // const user = await User.findById(req.body.userId);
+            // if(!user) {
+            //     return res.status(404).json({error: 'User not found with ID provided'})
+            // }
+            // // Update user thought array to contain new id
+            // user.thoughts.push(newThought._id); //Do I need the _id??????
+            // await user.save();
             // Success message
             res.status(201).json({ message: 'Thought created and added to user successfully', thought: newThought });
         } catch (error) {
