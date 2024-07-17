@@ -5,12 +5,12 @@ module.exports = {
     async getAllThoughts(req, res) {
         try {
             // Find all thoughts
-            const thought = Thought.find()
+            const thought = await Thought.find()
             // Display thought and status
             res.status(200).json(thought)
         } catch (error) {
             console.error(error)
-            res.setatus(500).json(error)
+            res.status(500).json(error)
         }
     },
     // Verify this is correct?????????
@@ -52,7 +52,7 @@ module.exports = {
     async updateThoughtById(req, res) {
         try {
             const updatedThought = await Thought.findByIdAndUpdate(req.params.id, { // Is this id or _id?
-                $set: req.body // Double check this ??????????
+                $set: req.body 
             }, {
                 runValidators: true,
                 new: true
@@ -64,8 +64,16 @@ module.exports = {
             res.setatus(500).json(error)
         }
 },
-    async deleteThoughtById(req, res) {
+    async deleteThoughtById(req, res) { // ???????
         try {
+            const thought = await Thought.findByIdAndDelete(req.params.id) // Is this the right method or is it findById??????????
+        
+            // Verify user exists in database or wrong id entered
+            if(!thought){
+                return res.status(404).json({error: 'Thought not found with ID provided'})
+            }
+            // 
+            res.status(200).json(thought)
             
         } catch (error) {
             console.error(error)
@@ -87,7 +95,8 @@ module.exports = {
             thought.reactions.push(req.params.reactions); // Verify if this is right???????
             await thought.save(); //await here or above?????
 
-            res.status(200).json(thought, {message: 'Reactin added successfully'}) // Can I do this?
+            res.status(200).json({ thought, message: 'Reaction added successfully' });
+
 
         } catch (error) {
             res.status(500).json(error)  

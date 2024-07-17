@@ -19,6 +19,7 @@ module.exports = {
 
 
         } catch (error) {
+          console.error(error)
           res.status(500).json(error)  
         }
     },
@@ -48,7 +49,7 @@ module.exports = {
             res.status(500).json(error)  
         }
     },
-    async removeUserById(req, res){
+    async deleteUserById(req, res){
       try {
         const user = await User.findByIdAndDelete(req.params.id) // Is this the right method or is it findById??????????
         
