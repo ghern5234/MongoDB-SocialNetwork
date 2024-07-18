@@ -67,48 +67,42 @@ module.exports = {
     async addNewFriend(req, res) {
         try {
 
-            const user = await User.findById(req.params.userId)
+            const user = await User.findByIdAndUpdate(req.params.userId, 
+                {
+                    $addToSet: {friends: req.params.friendId}
+                },
+                {
+                    new: true
+                }
+            )
             
             // Verify user exists or wrong id entered
             if(!user){
                 return res.status(404).json({error: 'User not found'})
             }
 
-            // Need to verify if the friend exists in the users friends list
-            if(user.friends.includes(req.params.friendId)){
-                return res.status(400).json({error: 'Friend already added'})
-            }
-
-            // Add the friendId to the user's friends list
-            user.friends.push(friendId);
-            await user.save(); //await here or above?
-
-            res.status(200).json(user, {message: 'Friend added successfully'}) // Can I do this?
+            res.status(200).json({user, message: 'Friend added successfully'}) // Can I do this?
 
         } catch (error) {
+            console.error(error)
             res.status(500).json(error)  
         }
     },
     async removeFriend(req, res) {
         try {
-            const user = await User.findOneAndDelete(req.params.friendId) // Is this the right method?????????
+            const user = await User.findByIdAndUpdate(req.params.userId, 
+                {$pull: {friends: req.params.friendId}},
+                {
+                    new: true
+                }
+            ) 
             
             // Verify is friend is in user friend list, if not alert user that they are not there to remove
             if(!user) {
-                return res.status(404).json({error: 'Friend already not in friend list'})
+                return res.status(404).json({error: 'Cannot find user with that ID'})
             }
 
-            // Verify if friend is in users friend list
-            const friendIndex = user.friends.indexOf(req.params.friendId)
-            if(friendIndex === -1){
-                return res.status(400).json({error: 'Friend not found'})
-            }
-
-            // Delete friend from user's friend list
-            user.friends.splice(friendIndex, 1);
-            await user.save();
-
-            res.status(200).json(user, {message: 'Friend removed successfully'}) // Can I do this?
+            res.status(200).json({user, message: 'Friend removed successfully'}) // Can I do this?
 
 
         } catch (error) {
