@@ -28,7 +28,6 @@ module.exports = {
            const user = await User.findById(req.params.id) // Search by id given in request params
             .populate("thoughts").populate("friends") 
 
-            // Do I need an if statement to verify the user/userid exists???????
 
 
             res.status(200).json(user)      
@@ -51,13 +50,13 @@ module.exports = {
     },
     async deleteUserById(req, res){
       try {
-        const user = await User.findByIdAndDelete(req.params.id) // Is this the right method or is it findById??????????
+        const user = await User.findByIdAndDelete(req.params.id)
         
         // Verify user exists in database or wrong id entered
         if(!user){
             return res.status(404).json({error: 'User not found with ID provided'})
         }
-        // 
+
         res.status(200).json(user)
 
     } catch (error) {
@@ -81,7 +80,7 @@ module.exports = {
                 return res.status(404).json({error: 'User not found'})
             }
 
-            res.status(200).json({user, message: 'Friend added successfully'}) // Can I do this?
+            res.status(200).json({user, message: 'Friend added successfully'}) 
 
         } catch (error) {
             console.error(error)
